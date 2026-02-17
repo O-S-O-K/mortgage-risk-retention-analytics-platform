@@ -21,13 +21,24 @@ def seed(n: int = 30) -> None:
                 credit_score=random.randint(580, 810),
                 ltv=round(random.uniform(55, 100), 2),
                 dti=round(random.uniform(15, 55), 2),
+                days_in_processing=random.randint(2, 40),
+                documentation_completeness_flag=random.randint(0, 1),
                 income=round(random.uniform(55000, 240000), 2),
                 loan_amount=round(random.uniform(120000, 900000), 2),
                 interest_rate=round(random.uniform(3.2, 9.8), 2),
                 tenure_years=random.randint(10, 30),
             )
 
-            loan_row = LoanScenario(**loan.model_dump())
+            payload = loan.model_dump()
+            loan_row = LoanScenario(
+                credit_score=payload["credit_score"],
+                ltv=payload["ltv"],
+                dti=payload["dti"],
+                income=payload["income"],
+                loan_amount=payload["loan_amount"],
+                interest_rate=payload["interest_rate"],
+                tenure_years=payload["tenure_years"],
+            )
             db.add(loan_row)
             db.flush()
 

@@ -39,7 +39,9 @@ class ModelService:
         return "Portfolio profile stable: monitor routinely"
 
     def score(self, loan: LoanRequest) -> PredictionResultDTO:
-        payload = pd.DataFrame([loan.model_dump()])
+        source_payload = loan.model_dump()
+        features = self.bundle.get("features", [])
+        payload = pd.DataFrame([{feature: source_payload[feature] for feature in features}])
         default_prob = float(self.bundle["default_model"].predict_proba(payload)[0, 1])
         retention_prob = float(self.bundle["retention_model"].predict_proba(payload)[0, 1])
 
@@ -49,3 +51,24 @@ class ModelService:
             recommendation=self._recommendation(default_prob, retention_prob),
             model_version=self.bundle.get("version", "v1"),
         )
+
+    def get_performance_summary(self) -> dict:
+        metrics = self.bundle.get("metrics", {})
+        return {
+            "roc_auc": float(metrics.get("default_roc_auc", 0.0)),
+            "precision_high_risk": float(metrics.get("default_precision_high_risk", 0.0)),
+            "recall_high_risk": float(metrics.get("default_recall_high_risk", 0.0)),
+            "cross_validated_accuracy": float(metrics.get("default_cross_validated_accuracy", 0.0)),
+            "top_predictive_features": self.bundle.get("top_predictive_features", []),
+        }
+
+    def get_explainability_summary(self) -> dict:
+        explainability = self.bundle.get("explainability", {})
+        governance = self.bundle.get("model_governance", {})
+        return {
+            "shap_values_sample": explainability.get("shap_values_sample", {}),
+            "shap_method": explainability.get("shap_method", "linear_model_contribution_approximation"),
+            "feature_importance": explainability.get("feature_importance", {}),
+            "feature_importance_plot_path": explainability.get("feature_importance_plot_path", ""),
+            "model_governance": governance,
+        }

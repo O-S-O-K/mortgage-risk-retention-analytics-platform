@@ -32,6 +32,12 @@ with st.form("score_form"):
     credit_score = c1.number_input("Credit Score", min_value=300, max_value=850, value=700)
     ltv = c1.number_input("LTV (%)", min_value=0.0, max_value=150.0, value=80.0)
     dti = c1.number_input("DTI (%)", min_value=0.0, max_value=100.0, value=32.0)
+    days_in_processing = c1.number_input("Days in Processing", min_value=0, max_value=120, value=12)
+    documentation_completeness_flag = c1.selectbox(
+        "Documentation Complete",
+        options=[1, 0],
+        format_func=lambda x: "Yes" if x == 1 else "No",
+    )
 
     income = c2.number_input("Income ($)", min_value=1000.0, value=120000.0, step=5000.0)
     loan_amount = c2.number_input("Loan Amount ($)", min_value=1000.0, value=350000.0, step=5000.0)
@@ -46,6 +52,8 @@ if submitted:
         "credit_score": int(credit_score),
         "ltv": float(ltv),
         "dti": float(dti),
+        "days_in_processing": int(days_in_processing),
+        "documentation_completeness_flag": int(documentation_completeness_flag),
         "income": float(income),
         "loan_amount": float(loan_amount),
         "interest_rate": float(interest_rate),

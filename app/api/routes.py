@@ -7,18 +7,36 @@ from app.db.session import get_db
 from app.models.loan import LoanScenario
 from app.models.prediction import PredictionResult
 from app.schemas.loan import LoanRequest
-from app.schemas.prediction import PortfolioSummary, ScoreResponse
+from app.schemas.optimization import CapacityOptimizationRequest, CapacityOptimizationResponse
+from app.schemas.prediction import (
+    ModelExplainabilityResponse,
+    ModelPerformanceResponse,
+    PortfolioSummary,
+    ScoreResponse,
+)
 from app.services.model_service import ModelService
+from app.services.optimization_service import UnderwriterCapacityOptimizationService
 from app.services.report_service import ReportService
 
 router = APIRouter(prefix="/api/v1", tags=["mortgage-analytics"])
 model_service = ModelService()
 report_service = ReportService()
+optimization_service = UnderwriterCapacityOptimizationService()
 
 
 @router.post("/score", response_model=ScoreResponse)
 def score_loan(loan: LoanRequest, db: Session = Depends(get_db)):
-    loan_row = LoanScenario(**loan.model_dump())
+    payload = loan.model_dump()
+    db_payload = {
+        "credit_score": payload["credit_score"],
+        "ltv": payload["ltv"],
+        "dti": payload["dti"],
+        "income": payload["income"],
+        "loan_amount": payload["loan_amount"],
+        "interest_rate": payload["interest_rate"],
+        "tenure_years": payload["tenure_years"],
+    }
+    loan_row = LoanScenario(**db_payload)
     db.add(loan_row)
     db.flush()
 
@@ -81,3 +99,29 @@ def executive_summary_report(db: Session = Depends(get_db)):
         media_type="application/pdf",
         filename=pdf_path.name,
     )
+
+
+@router.get("/model/performance", response_model=ModelPerformanceResponse)
+def model_performance():
+    return ModelPerformanceResponse(**model_service.get_performance_summary())
+
+
+@router.get("/model/explainability", response_model=ModelExplainabilityResponse)
+def model_explainability():
+    return ModelExplainabilityResponse(**model_service.get_explainability_summary())
+
+
+@router.post("/optimization/underwriter-capacity", response_model=CapacityOptimizationResponse)
+def optimize_underwriter_capacity(
+    request: CapacityOptimizationRequest,
+    db: Session = Depends(get_db),
+):
+    risk_scores = [
+        row[0]
+        for row in db.query(PredictionResult.risk_score)
+        .order_by(PredictionResult.created_at.desc())
+        .limit(5000)
+        .all()
+    ]
+    result = optimization_service.optimize(request, risk_scores)
+    return CapacityOptimizationResponse(**result)

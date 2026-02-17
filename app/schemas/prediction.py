@@ -19,3 +19,24 @@ class PortfolioSummary(BaseModel):
     avg_retention_score: float
     high_risk_count: int
     low_retention_count: int
+
+
+class TopFeature(BaseModel):
+    feature: str
+    importance: float
+
+
+class ModelPerformanceResponse(BaseModel):
+    roc_auc: float
+    precision_high_risk: float
+    recall_high_risk: float
+    cross_validated_accuracy: float
+    top_predictive_features: list[TopFeature]
+
+
+class ModelExplainabilityResponse(BaseModel):
+    shap_values_sample: dict[str, float]
+    shap_method: str
+    feature_importance: dict[str, float]
+    feature_importance_plot_path: str
+    model_governance: dict[str, str | list[str]]

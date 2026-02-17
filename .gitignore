@@ -8,5 +8,6 @@ __pycache__/
 !.vscode/launch.json
 *.db
 reports/generated/
+data/*.joblib
 *.egg-info/
 .conda/
