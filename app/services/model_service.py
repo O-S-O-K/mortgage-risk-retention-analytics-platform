@@ -1,0 +1,51 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+from pathlib import Path
+
+import joblib
+import pandas as pd
+
+from app.core.config import settings
+from app.schemas.loan import LoanRequest
+from pipelines.train_model import train_and_save_model
+
+
+@dataclass
+class PredictionResultDTO:
+    risk_score: float
+    retention_score: float
+    recommendation: str
+    model_version: str
+
+
+class ModelService:
+    def __init__(self, model_path: str | Path | None = None):
+        self.model_path = Path(model_path or settings.model_path)
+        self.bundle = self._load_or_train()
+
+    def _load_or_train(self) -> dict:
+        if not self.model_path.exists():
+            return train_and_save_model(self.model_path)
+        return joblib.load(self.model_path)
+
+    def _recommendation(self, risk: float, retention: float) -> str:
+        if risk >= 0.65 and retention < 0.45:
+            return "High risk and low retention: immediate intervention required"
+        if risk >= 0.65:
+            return "High default risk: tighten underwriting and monitoring"
+        if retention < 0.45:
+            return "Low retention risk: offer targeted customer retention program"
+        return "Portfolio profile stable: monitor routinely"
+
+    def score(self, loan: LoanRequest) -> PredictionResultDTO:
+        payload = pd.DataFrame([loan.model_dump()])
+        default_prob = float(self.bundle["default_model"].predict_proba(payload)[0, 1])
+        retention_prob = float(self.bundle["retention_model"].predict_proba(payload)[0, 1])
+
+        return PredictionResultDTO(
+            risk_score=round(default_prob, 4),
+            retention_score=round(retention_prob, 4),
+            recommendation=self._recommendation(default_prob, retention_prob),
+            model_version=self.bundle.get("version", "v1"),
+        )
