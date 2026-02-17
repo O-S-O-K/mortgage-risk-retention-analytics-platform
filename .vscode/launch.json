@@ -1,0 +1,46 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "API: FastAPI (stable)",
+      "type": "debugpy",
+      "request": "launch",
+      "python": "${workspaceFolder}/.conda/python.exe",
+      "module": "uvicorn",
+      "args": [
+        "app.main:app",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "8000"
+      ],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Dashboard: Streamlit",
+      "type": "debugpy",
+      "request": "launch",
+      "python": "${workspaceFolder}/.conda/python.exe",
+      "module": "streamlit",
+      "args": [
+        "run",
+        "dashboard/streamlit_app.py"
+      ],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Demo: API + Dashboard",
+      "configurations": [
+        "API: FastAPI (stable)",
+        "Dashboard: Streamlit"
+      ],
+      "stopAll": true
+    }
+  ]
+}

@@ -3,7 +3,9 @@ __pycache__/
 .pytest_cache/
 .venv/
 .env
-.vscode/
+.vscode/*
+!.vscode/tasks.json
+!.vscode/launch.json
 *.db
 reports/generated/
 *.egg-info/
