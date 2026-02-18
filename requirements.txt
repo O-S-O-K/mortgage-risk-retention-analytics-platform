@@ -1,0 +1,15 @@
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+sqlalchemy>=2.0.30
+pydantic>=2.8.0
+pandas>=2.2.0
+numpy>=1.26.0
+scikit-learn>=1.5.0
+streamlit>=1.37.0
+requests>=2.32.0
+matplotlib>=3.9.0
+seaborn>=0.13.0
+fpdf2>=2.7.9
+python-dotenv>=1.0.1
+joblib>=1.4.2
+httpx>=0.27.0

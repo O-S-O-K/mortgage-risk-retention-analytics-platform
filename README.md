@@ -1,9 +1,7 @@
 # Mortgage Risk & Retention Analytics Platform
 
 ![CI](https://github.com/O-S-O-K/mortgage-risk-retention-analytics-platform/actions/workflows/ci.yml/badge.svg)
-[![Run Demo (VS Code)](https://img.shields.io/badge/Run%20Demo-VS%20Code-007ACC?logo=visualstudiocode&logoColor=white)](#quick-demo)
-[![API Docs](https://img.shields.io/badge/API%20Docs-127.0.0.1%3A8000-2EA44F)](http://127.0.0.1:8000/docs)
-[![Dashboard](https://img.shields.io/badge/Dashboard-localhost%3A8501-EF4B4B)](http://localhost:8501)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Hugging%20Face-FFCC4D?logo=huggingface&logoColor=black)](https://huggingface.co/spaces/O-S-O-K/mortgage-risk-retention-analytics-platform)
 
 A portfolio-ready end-to-end analytics MVP with:
 - SQL database (SQLite via SQLAlchemy)
@@ -15,10 +13,20 @@ A portfolio-ready end-to-end analytics MVP with:
 
 ## Quick Demo
 
-1. In VS Code, open **Run and Debug**.
-2. Start **Demo: API + Dashboard** (compound launch).
-3. Open API docs: `http://127.0.0.1:8000/docs`.
-4. Open dashboard: `http://localhost:8501`.
+- In VS Code **Run and Debug**, launch **Demo: API + Dashboard**.
+- Open `http://127.0.0.1:8000/docs` and `http://localhost:8501`.
+
+## Live Demo (Hugging Face Streamlit)
+
+1. Create a Streamlit Space and point it to this repo.
+2. Set app file to:
+	- `dashboard/streamlit_app.py`
+3. In Space Variables, set:
+	- `STREAMLIT_LOCAL_SERVICES=1`
+4. Do not set `API_BASE_URL`.
+
+In this mode, Streamlit uses the same model/report/database services directly in-process.
+On HF free tier, local SQLite data and generated report files may reset when the Space rebuilds or restarts.
 
 ## Business Framing
 
@@ -75,6 +83,13 @@ Open docs at `http://127.0.0.1:8000/docs`.
 
 ```bash
 streamlit run dashboard/streamlit_app.py
+
+Optional override for non-local API:
+
+```bash
+set API_BASE_URL=https://<your-api-host>
+streamlit run dashboard/streamlit_app.py
+```
 ```
 
 ## 5) Core Endpoints
