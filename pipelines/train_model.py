@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import joblib
@@ -156,7 +157,8 @@ def train_and_save_model(model_path: str | Path = DEFAULT_MODEL_PATH) -> dict:
         for feature, score in sorted(feature_importance.items(), key=lambda item: item[1], reverse=True)[:5]
     ]
 
-    feature_plot_path = Path("./reports/generated/feature_importance_default.png")
+    reports_dir = Path(os.getenv("REPORTS_DIR", "./reports/generated"))
+    feature_plot_path = reports_dir / "feature_importance_default.png"
     _build_feature_importance_plot(feature_importance, feature_plot_path)
 
     bundle = {
