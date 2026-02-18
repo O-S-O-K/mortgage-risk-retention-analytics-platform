@@ -1,3 +1,15 @@
+---
+title: Mortgage Risk Retention Analytics Platform
+emoji: 📊
+colorFrom: blue
+colorTo: indigo
+sdk: streamlit
+sdk_version: "1.37.0"
+python_version: "3.11"
+app_file: app.py
+pinned: false
+---
+
 # Mortgage Risk & Retention Analytics Platform
 
 ![CI](https://github.com/O-S-O-K/mortgage-risk-retention-analytics-platform/actions/workflows/ci.yml/badge.svg)
