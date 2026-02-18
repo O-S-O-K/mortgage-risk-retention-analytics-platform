@@ -28,6 +28,25 @@ A portfolio-ready end-to-end analytics MVP with:
 In this mode, Streamlit uses the same model/report/database services directly in-process.
 On HF free tier, local SQLite data and generated report files may reset when the Space rebuilds or restarts.
 
+### HF Deploy Updates (repeatable)
+
+If direct `git push hf main` fails due to remote history/binary checks, use a clean snapshot push:
+
+```bash
+git checkout --orphan hf-deploy
+git add -A
+git commit -m "HF deploy snapshot"
+git push hf hf-deploy:main --force
+git checkout main
+git branch -D hf-deploy
+```
+
+Optional verification:
+
+```bash
+git ls-remote --heads hf main
+```
+
 ## Business Framing
 
 Mortgage lenders face revenue leakage due to loan fallout and customer attrition.
