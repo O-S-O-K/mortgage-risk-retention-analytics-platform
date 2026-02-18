@@ -1,15 +1,3 @@
----
-title: Mortgage Risk Retention Analytics Platform
-emoji: 📊
-colorFrom: blue
-colorTo: indigo
-sdk: streamlit
-sdk_version: "1.37.0"
-python_version: "3.11"
-app_file: dashboard/streamlit_app.py
-pinned: false
----
-
 # Mortgage Risk & Retention Analytics Platform
 
 ![CI](https://github.com/O-S-O-K/mortgage-risk-retention-analytics-platform/actions/workflows/ci.yml/badge.svg)
@@ -42,15 +30,10 @@ On HF free tier, local SQLite data and generated report files may reset when the
 
 ### HF Deploy Updates (repeatable)
 
-If direct `git push hf main` fails due to remote history/binary checks, use a clean snapshot push:
+Use the helper script (it creates a clean deploy snapshot and injects HF metadata only for Space deploy):
 
-```bash
-git checkout --orphan hf-deploy
-git add -A
-git commit -m "HF deploy snapshot"
-git push hf hf-deploy:main --force
-git checkout main
-git branch -D hf-deploy
+```powershell
+./scripts/deploy_hf_space.ps1
 ```
 
 Optional verification:
@@ -114,13 +97,13 @@ Open docs at `http://127.0.0.1:8000/docs`.
 
 ```bash
 streamlit run dashboard/streamlit_app.py
+```
 
 Optional override for non-local API:
 
 ```bash
 set API_BASE_URL=https://<your-api-host>
 streamlit run dashboard/streamlit_app.py
-```
 ```
 
 ## 5) Core Endpoints
